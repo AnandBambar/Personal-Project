@@ -77,12 +77,6 @@ const sendMessage = (e) => {
   chatInputForm.reset();
 };
 
-// Clear chat messages for the current group
-clearChatBtn.addEventListener("click", () => {
-  chatData[currentGroup] = [];
-  localStorage.setItem("chatData", JSON.stringify(chatData));
-  renderMessages();
-});
 
 // Event listeners
 chatInputForm.addEventListener("submit", sendMessage);
