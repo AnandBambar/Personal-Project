@@ -1,32 +1,22 @@
-const user1SelectorBtn = document.querySelector("#user1-selector");
-const user2SelectorBtn = document.querySelector("#user2-selector");
 const groupButtons = document.querySelectorAll(".group-selector-button");
 const chatHeader = document.querySelector(".chat-header");
 const chatMessages = document.querySelector(".chat-messages");
 const chatInputForm = document.querySelector(".chat-input-form");
 const chatInput = document.querySelector(".chat-input");
 const clearChatBtn = document.querySelector(".clear-chat-button");
-
 const chatData = JSON.parse(localStorage.getItem("chatData")) || {
-  General: [],
-  Sports: [],
+  English: [],
+  Science: [],
   Music: [],
-  Tech: [],
+  Math: [],
 };
 
-let currentSender = "user1";
-let currentGroup = "General";
+let currentGroup = "English";
 
-const updateUser = (name) => {
-  currentSender = name;
-  user1SelectorBtn.classList.toggle("active-person", name === "user1");
-  user2.classList.toggle("active-person", name === "user2");
-  chatInput.placeholder = `Type here, ${currentSender}...`;
-};
-
+// Update the current group
 const updateGroup = (groupName) => {
   currentGroup = groupName;
-  chatHeader.textContent = `${groupName} Chat`;
+  chatHeader.textContent = `${groupName}`;
 
   groupButtons.forEach((btn) => {
     btn.classList.toggle("active-group", btn.dataset.group === groupName);
@@ -35,12 +25,13 @@ const updateGroup = (groupName) => {
   renderMessages();
 };
 
+// Render messages for the current group
 const renderMessages = () => {
   chatMessages.innerHTML = "";
   const messages = chatData[currentGroup];
   messages.forEach((message) => {
     chatMessages.innerHTML += `
-      <div class="message ${message.sender === currentSender ? "blue-bg" : "gray-bg"}">
+      <div class="message blue-bg">
         <div class="message-sender">${message.sender}</div>
         <div class="message-text">${message.text}</div>
         <div class="message-timestamp">${message.timestamp}</div>
@@ -61,7 +52,7 @@ const sendMessage = (e) => {
   });
 
   const message = {
-    sender: currentSender,
+    sender: "You", // Simplified sender
     text: chatInput.value,
     timestamp,
   };
@@ -77,13 +68,20 @@ const sendMessage = (e) => {
   chatInputForm.reset();
 };
 
-
 // Event listeners
 chatInputForm.addEventListener("submit", sendMessage);
-user1SelectorBtn.addEventListener("click", () => updateUser("user1"));
-user2SelectorBtn.addEventListener("click", () => updateUser("user2"));
 groupButtons.forEach((btn) =>
   btn.addEventListener("click", () => updateGroup(btn.dataset.group))
 );
 
+const clearChat = () => {
+  chatData[currentGroup] = []; // Clears messages from the current group
+  localStorage.setItem("chatData", JSON.stringify(chatData)); // Save the empty messages to localStorage
+  renderMessages(); // Re-render the messages (now empty)
+};
+
+// Event listener for the "Clear Chat" button
+clearChatBtn.addEventListener("click", clearChat);
+
+// Initial render
 renderMessages();
